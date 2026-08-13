@@ -39,21 +39,11 @@ public class FileMessageRepository implements MessageRepository {
     }
 
     @Override
-    public List<Message> findAllByChannelId(UUID channelId) {
-        return messageList.stream()
-                .filter(each -> each.getChannelId() != null && each.getChannelId().equals(channelId))
-                .toList();
-    }
-
-    @Override
     public void delete(UUID id) {
         Message target = findById(id);
-        if (target != null) {
-            messageList.remove(target);
-            saveMessage();
-        }
+        messageList.remove(target);
+        saveMessage();
     }
-
     private void saveMessage() {
         try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream("newmessagelist"))) {
             objectOutputStream.writeObject(messageList);
