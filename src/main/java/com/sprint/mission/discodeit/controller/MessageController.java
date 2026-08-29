@@ -1,8 +1,10 @@
 package com.sprint.mission.discodeit.controller;
 
+import com.sprint.mission.discodeit.dto.binarycontentdto.BinaryContentCreateRequestDto;
 import com.sprint.mission.discodeit.dto.messagedto.MessageCreateRequestDto;
 import com.sprint.mission.discodeit.dto.messagedto.MessageResponseDto;
 import com.sprint.mission.discodeit.dto.messagedto.MessageUpdateRequestDto;
+import com.sprint.mission.discodeit.mapper.MultipartFileMapper;
 import com.sprint.mission.discodeit.service.MessageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,6 +20,7 @@ import java.util.UUID;
 @RequestMapping("/api/messages")
 public class MessageController {
     private final MessageService messageService;
+    private final MultipartFileMapper multipartFileMapper;
 
     // URL 충돌방지를 위해 consumes로 미디어 타입 명시
     @RequestMapping(method = RequestMethod.POST, value = "", consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -31,6 +34,10 @@ public class MessageController {
     @ResponseStatus(HttpStatus.CREATED)
     public MessageResponseDto sendWithAttachments(@RequestPart("messageCreateRequest") MessageCreateRequestDto dto,
                                                   @RequestPart(value = "attachments", required = false) List<MultipartFile> attachments) {
+        // MultipartFile 리스트 → BinaryContentCreateRequestDto 리스트 변환 후 dto에 연결
+        List<BinaryContentCreateRequestDto> attachmentDtos = multipartFileMapper.toDtoList(attachments);
+        dto.setAttachmentDtos(attachmentDtos);
+
         return messageService.createMessage(dto);
     }
 

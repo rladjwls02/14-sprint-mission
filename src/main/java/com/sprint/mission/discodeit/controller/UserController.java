@@ -1,10 +1,12 @@
 package com.sprint.mission.discodeit.controller;
 
+import com.sprint.mission.discodeit.dto.binarycontentdto.BinaryContentCreateRequestDto;
 import com.sprint.mission.discodeit.dto.userdto.UserCreateRequestDto;
 import com.sprint.mission.discodeit.dto.userdto.UserResponseDto;
 import com.sprint.mission.discodeit.dto.userdto.UserUpdateRequestDto;
 import com.sprint.mission.discodeit.dto.userstatusdto.UserStatusResponseDto;
 import com.sprint.mission.discodeit.dto.userstatusdto.UserStatusUpdateRequestDto;
+import com.sprint.mission.discodeit.mapper.MultipartFileMapper;
 import com.sprint.mission.discodeit.service.UserService;
 import com.sprint.mission.discodeit.service.UserStatusService;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +26,8 @@ import java.util.UUID;
 public class UserController {
     private final UserService userService;
     private final UserStatusService userStatusService;
+    private final MultipartFileMapper multipartFileMapper;
+
     // URL 충돌방지를 위해 consumes로 미디어 타입 명시
     @RequestMapping(method = RequestMethod.POST, value = "", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
@@ -38,6 +42,10 @@ public class UserController {
     @ResponseStatus(HttpStatus.CREATED)
     public UserResponseDto createWithProfile(@RequestPart("userCreateRequest") UserCreateRequestDto dto,
                                              @RequestPart(value = "profile", required = false) MultipartFile profile) {
+        // MultipartFile를 BinaryContentCreateRequestDto 변환 후 dto에 연결
+        BinaryContentCreateRequestDto profileDto = multipartFileMapper.toDto(profile);
+        dto.setBinaryContentCreateRequestDto(profileDto);
+
         UserResponseDto newUser = userService.createUser(dto);
         log.info("유저 생성 완료, 유저 이름: " + newUser.getName());
         return newUser;
@@ -59,6 +67,10 @@ public class UserController {
     public UserResponseDto updateWithProfile(@PathVariable UUID userId,
                                              @RequestPart("userUpdateRequest") UserUpdateRequestDto dto,
                                              @RequestPart(value = "profile", required = false) MultipartFile profile) {
+        // MultipartFile를 BinaryContentCreateRequestDto 변환 후 dto에 연결
+        BinaryContentCreateRequestDto profileDto = multipartFileMapper.toDto(profile);
+        dto.setProfileImageRequestDto(profileDto);
+
         return userService.updateUser(userId, dto);
     }
 
