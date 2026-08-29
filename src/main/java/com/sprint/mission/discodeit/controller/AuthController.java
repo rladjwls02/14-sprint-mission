@@ -5,6 +5,7 @@ import com.sprint.mission.discodeit.dto.userdto.UserResponseDto;
 import com.sprint.mission.discodeit.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
     private final AuthService authService;
 
-    @RequestMapping(method = RequestMethod.POST, value = "/login" )
+    @RequestMapping(method = RequestMethod.POST, value = "/auth")
     public UserResponseDto login(@RequestBody AuthCreateRequestDto dto) {
         return authService.login(dto);
     }

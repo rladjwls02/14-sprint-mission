@@ -29,10 +29,7 @@ public class BasicReadStatusService implements ReadStatusService {
         if (Objects.isNull(userRepository.findById(requestDto.getUserId()))
                 || Objects.isNull(channelRepository.findById(requestDto.getChannelId()))) {
             // throw new RuntimeException("관련된 Channel이나 User가 존재하지 않습니다.");
-            if (Objects.isNull(userRepository.findById(requestDto.getUserId()))) {
-                throw new CustomRuntimeException(ExceptionType.USER_NOT_FOUND, requestDto.getUserId());
-            }
-            throw new CustomRuntimeException(ExceptionType.CHANNEL_NOT_FOUND, requestDto.getChannelId());
+            throw new CustomRuntimeException(ExceptionType.NOT_FOUND);
         }
 
         boolean exists = readStatusRepository.findAll().stream()
@@ -40,7 +37,7 @@ public class BasicReadStatusService implements ReadStatusService {
                         && Objects.equals(each.getChannelId(), requestDto.getChannelId()));
         if (exists) {
             // throw new RuntimeException("해당 채널과 유저에 대한 ReadStatus가 이미 존재합니다.");
-            throw new CustomRuntimeException(ExceptionType.READ_STATUS_ALREADY_EXISTS, requestDto.getUserId());
+            throw new CustomRuntimeException(ExceptionType.NOT_FOUND);
         }
 
         ReadStatus readStatus = requestDto.toEntity();
@@ -53,7 +50,7 @@ public class BasicReadStatusService implements ReadStatusService {
         ReadStatus readStatus = readStatusRepository.findById(id);
         if (Objects.isNull(readStatus)) {
             // throw new RuntimeException("해당 ReadStatus가 존재하지 않습니다: " + id);
-            throw new CustomRuntimeException(ExceptionType.READ_STATUS_NOT_FOUND, id);
+            throw new CustomRuntimeException(ExceptionType.NOT_FOUND);
         }
         return ReadStatusResponseDto.from(readStatus);
     }
@@ -70,7 +67,7 @@ public class BasicReadStatusService implements ReadStatusService {
         ReadStatus target = readStatusRepository.findById(id);
         if (Objects.isNull(target)) {
             // throw new RuntimeException("해당 ReadStatus가 존재하지 않습니다: " + id);
-            throw new CustomRuntimeException(ExceptionType.READ_STATUS_NOT_FOUND, id);
+            throw new CustomRuntimeException(ExceptionType.NOT_FOUND);
         }
         target.setLastReadAt(requestDto.getLastReadAt());
         target.setUpdatedAt();

@@ -32,24 +32,10 @@ public class ChannelResponseDto {
                 channel.getId(),
                 channel.getChannelName(),
                 channel.getChannelType(),
-                channel.getMemberIds(),
+                channel.getChannelType() == ChannelType.PRIVATE ? channel.getMemberIds() : channel.getMemberIds(),
                 lastMessageAt,
                 channel.getCreatedAt(),
                 channel.getUpdatedAt()
         );
     }
-
-    // 게터로 프론트에 필드 쏴주기
-    public String getName() {
-        return channelName;
-    }
-
-    public ChannelType getType() {
-        return channelType;
-    }
-
-    public List<UUID> getParticipantIds() {
-        return memberIds;
-    }
-
 }

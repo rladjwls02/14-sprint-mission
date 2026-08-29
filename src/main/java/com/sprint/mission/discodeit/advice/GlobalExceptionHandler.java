@@ -22,9 +22,7 @@ public class GlobalExceptionHandler {
         //프론트에 무슨 에러난지 보내주기
         return ResponseEntity
                 .status(exceptionType.getStatus())
-                /* 프론트에도 에러메세지 구체적으로 솨주기 위해
-                exceptionType을 exception으로 변경*/
-                .body(exception.getMessage());
+                .body(exceptionType.getMessage());
     }
 
 //    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
