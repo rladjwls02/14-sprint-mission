@@ -19,6 +19,6 @@ public class ChannelCreateRequestDto {
     private String description;
 
     public Channel toEntity() {
-        return new Channel(this.name, List.of(), ChannelType.PUBLIC);
+        return new Channel(this.name, List.of(), ChannelType.PUBLIC, this.description);
     }
 }

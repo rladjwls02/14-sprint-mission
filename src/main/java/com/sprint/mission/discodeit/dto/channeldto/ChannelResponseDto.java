@@ -18,6 +18,7 @@ public class ChannelResponseDto {
     UUID id;
     String name;
     ChannelType type;
+    String description;
     List<UUID> participantIds;
     Instant lastMessageAt;
     Instant createdAt;
@@ -32,6 +33,7 @@ public class ChannelResponseDto {
                 channel.getId(),
                 channel.getChannelName(),
                 channel.getChannelType(),
+                channel.getDescription(),
                 channel.getMemberIds(),
                 lastMessageAt,
                 channel.getCreatedAt(),

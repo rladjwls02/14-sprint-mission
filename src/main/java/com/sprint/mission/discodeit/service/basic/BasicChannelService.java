@@ -122,6 +122,7 @@ public class BasicChannelService implements ChannelService {
             throw new CustomRuntimeException(ExceptionType.BAD_REQUEST);
         }
         target.setChannelName(requestDto.getNewName());
+        target.setDescription(requestDto.getNewDescription());
         target.setUpdatedAt();
         channelRepository.save(target);
         Instant lastMessageAt = getLastMessageAt(id);

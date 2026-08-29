@@ -18,15 +18,17 @@ public class Channel implements Serializable {
     private String channelName;
     private List<UUID> memberIds;
     private ChannelType channelType;
+    private String description;
 
     private final UUID id;
     private final Instant createdAt;
     private Instant updatedAt;
 
-    public Channel(String channelName, List<UUID> memberIds, ChannelType channelType) {
+    public Channel(String channelName, List<UUID> memberIds, ChannelType channelType, String description) {
         this.channelName = channelName;
         this.memberIds = memberIds;
         this.channelType = channelType;
+        this.description = description;
 
         this.id = UUID.randomUUID();
         this.createdAt = Instant.now();
@@ -34,7 +36,7 @@ public class Channel implements Serializable {
     }
 
     public Channel(String channelName, List<UUID> memberIds) {
-        this(channelName, memberIds, ChannelType.PUBLIC);
+        this(channelName, memberIds, ChannelType.PUBLIC, null);
     }
 
     public void setUpdatedAt() {

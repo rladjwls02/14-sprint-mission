@@ -18,6 +18,6 @@ public class PrivateChannelCreateRequestDto {
     private List<UUID> participantIds;
 
     public Channel toEntity() {
-        return new Channel(null, this.participantIds, ChannelType.PRIVATE);
+        return new Channel(null, this.participantIds, ChannelType.PRIVATE, null);
     }
 }
