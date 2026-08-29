@@ -93,6 +93,18 @@ public class BasicUserService implements UserService {
         if(requestDto.getNewUsername() != null) {
             target.setName(requestDto.getNewUsername());
         }
+        //이멜 변경(중복체크도 해야함)
+        if(requestDto.getNewEmail() != null &&
+                !requestDto.getNewEmail().equals(target.getEmail())) {
+            if (!Objects.isNull(userRepository.findByEmail(requestDto.getNewEmail()))) {
+                throw new CustomRuntimeException(ExceptionType.USER_EMAIL_ALREADY_EXISTS, requestDto.getNewEmail());
+            }
+            target.setEmail(requestDto.getNewEmail());
+        }
+        //비밀번호 변경
+        if(requestDto.getNewPassword() != null) {
+            target.setPassword(requestDto.getNewPassword());
+        }
         //컨텐츠 받으면 기존꺼 삭제하고 업데이트
         if (requestDto.getProfileImageRequestDto() != null) {
             BinaryContent oldContent = binaryContentRepository.findById(id);
