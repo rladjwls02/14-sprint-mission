@@ -18,6 +18,7 @@ public class PrivateChannelCreateRequestDto {
     private List<UUID> participantIds;
 
     public Channel toEntity() {
+        // 채널name과 description을 null 생성하는 이유는 api스펙에 그렇게 명시되어 있기때문
         return new Channel(null, this.participantIds, ChannelType.PRIVATE, null);
     }
 }
