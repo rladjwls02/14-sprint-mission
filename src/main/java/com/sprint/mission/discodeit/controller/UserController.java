@@ -33,7 +33,7 @@ public class UserController {
     @ResponseStatus(HttpStatus.CREATED)
     public UserResponseDto create(@RequestBody UserCreateRequestDto dto) {
         UserResponseDto newUser = userService.createUser(dto);
-        log.info("유저 생성 완료, 유저 이름: " + newUser.getName());
+        log.info("유저 생성 완료, 유저 이름: " + newUser.getUsername());
         return newUser;
     }
 
@@ -47,7 +47,7 @@ public class UserController {
         dto.setBinaryContentCreateRequestDto(profileDto);
 
         UserResponseDto newUser = userService.createUser(dto);
-        log.info("유저 생성 완료, 유저 이름: " + newUser.getName());
+        log.info("유저 생성 완료, 유저 이름: " + newUser.getUsername());
         return newUser;
     }
 

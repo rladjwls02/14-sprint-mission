@@ -16,10 +16,10 @@ import java.util.UUID;
 public class UserResponseDto {
     UUID id;
     String email;
-    String name;
+    String username;
     Instant createdAt;
     Instant updatedAt;
-    boolean isOnline;
+    boolean online;
 
     public static UserResponseDto from(User user, UserStatus userStatus) {
         return new UserResponseDto(
@@ -31,17 +31,4 @@ public class UserResponseDto {
                 userStatus.isOnline()
         );
     }
-    // 게터로 프론트에 필드 쏴주기
-    public String getUsername() {
-        return name;
-    }
-
-    public boolean getOnline() {
-        return isOnline;
-    }
-
-    public UUID getProfileId() {
-        return null;
-    }
-
 }

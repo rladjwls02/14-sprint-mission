@@ -90,8 +90,8 @@ public class BasicUserService implements UserService {
             throw new CustomRuntimeException(ExceptionType.USER_NOT_FOUND, id);
         }
         //이름 받으면 업데이트
-        if(requestDto.getName() != null) {
-            target.setName(requestDto.getName());
+        if(requestDto.getNewUsername() != null) {
+            target.setName(requestDto.getNewUsername());
         }
         //컨텐츠 받으면 기존꺼 삭제하고 업데이트
         if (requestDto.getProfileImageRequestDto() != null) {

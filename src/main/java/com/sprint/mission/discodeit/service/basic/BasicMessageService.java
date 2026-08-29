@@ -43,18 +43,18 @@ public class BasicMessageService implements MessageService {
 
     @Override
     public MessageResponseDto createMessage(MessageCreateRequestDto requestDto) {
-        if (Objects.isNull(userRepository.findById(requestDto.getSenderId()))
+        if (Objects.isNull(userRepository.findById(requestDto.getAuthorId()))
                 || Objects.isNull(channelRepository.findById(requestDto.getChannelId()))) {
             // throw new RuntimeException("유효하지 않은 채널 또는 유저입니다");
-            if (Objects.isNull(userRepository.findById(requestDto.getSenderId()))) {
-                throw new CustomRuntimeException(ExceptionType.USER_NOT_FOUND, requestDto.getSenderId());
+            if (Objects.isNull(userRepository.findById(requestDto.getAuthorId()))) {
+                throw new CustomRuntimeException(ExceptionType.USER_NOT_FOUND, requestDto.getAuthorId());
             }
             throw new CustomRuntimeException(ExceptionType.CHANNEL_NOT_FOUND, requestDto.getChannelId());
         }
 
         Channel channel = channelRepository.findById(requestDto.getChannelId());
-        if (channel.getChannelType() == ChannelType.PUBLIC || (channel.getMemberIds() != null && channel.getMemberIds().contains(requestDto.getSenderId()))) {
-            Message message = new Message(requestDto.getValues(), requestDto.getChannelId(), requestDto.getSenderId());
+        if (channel.getChannelType() == ChannelType.PUBLIC || (channel.getMemberIds() != null && channel.getMemberIds().contains(requestDto.getAuthorId()))) {
+            Message message = new Message(requestDto.getContent(), requestDto.getChannelId(), requestDto.getAuthorId());
             messageRepository.save(message);
 
             List<BinaryContentResponseDto> addedContents = new ArrayList<>();
@@ -69,7 +69,7 @@ public class BasicMessageService implements MessageService {
             return MessageResponseDto.from(message, addedContents);
         }
 
-        // throw new RuntimeException("해당 채널의 멤버가 아닙니다: " + requestDto.getSenderId());
+        // throw new RuntimeException("해당 채널의 멤버가 아닙니다: " + requestDto.getSenderrId());
         throw new CustomRuntimeException(ExceptionType.BAD_REQUEST, "Sender is not a member of channel");
     }
 
@@ -113,7 +113,7 @@ public class BasicMessageService implements MessageService {
             // throw new RuntimeException("해당 메시지가 존재하지 않습니다: " + id);
             throw new CustomRuntimeException(ExceptionType.MESSAGE_NOT_FOUND, id);
         }
-        target.setValues(requestDto.getValues());
+        target.setValues(requestDto.getNewContent());
         target.setUpdatedAt();
         messageRepository.save(target);
         List<BinaryContentResponseDto> addedContents = getAttachments(id);

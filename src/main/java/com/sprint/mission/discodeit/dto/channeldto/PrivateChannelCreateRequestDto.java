@@ -15,20 +15,9 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PrivateChannelCreateRequestDto {
-    private List<UUID> memberIds;
-
-    /* 서비스 코드, 필드변경 없이 하려고 setter 메서드 추가,
-    프론트에서 쏴주는거 매핑해주려고
-     */
-    public void setParticipantIds(List<UUID> participantIds) {
-        this.memberIds = participantIds;
-    }
-
-    public List<UUID> getParticipantIds() {
-        return this.memberIds;
-    }
+    private List<UUID> participantIds;
 
     public Channel toEntity() {
-        return new Channel(null, this.memberIds, ChannelType.PRIVATE);
+        return new Channel(null, this.participantIds, ChannelType.PRIVATE);
     }
 }

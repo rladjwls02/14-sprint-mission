@@ -72,7 +72,7 @@ public class BasicReadStatusService implements ReadStatusService {
             // throw new RuntimeException("해당 ReadStatus가 존재하지 않습니다: " + id);
             throw new CustomRuntimeException(ExceptionType.READ_STATUS_NOT_FOUND, id);
         }
-        target.setLastReadAt(requestDto.getLastReadAt());
+        target.setLastReadAt(requestDto.getNewLastReadAt());
         target.setUpdatedAt();
         readStatusRepository.save(target);
         return ReadStatusResponseDto.from(target);

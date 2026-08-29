@@ -16,9 +16,9 @@ import java.util.UUID;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ChannelResponseDto {
     UUID id;
-    String channelName;
-    ChannelType channelType;
-    List<UUID> memberIds;
+    String name;
+    ChannelType type;
+    List<UUID> participantIds;
     Instant lastMessageAt;
     Instant createdAt;
     Instant updatedAt;
@@ -38,18 +38,4 @@ public class ChannelResponseDto {
                 channel.getUpdatedAt()
         );
     }
-
-    // 게터로 프론트에 필드 쏴주기
-    public String getName() {
-        return channelName;
-    }
-
-    public ChannelType getType() {
-        return channelType;
-    }
-
-    public List<UUID> getParticipantIds() {
-        return memberIds;
-    }
-
 }

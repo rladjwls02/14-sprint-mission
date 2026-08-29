@@ -35,24 +35,6 @@ public class BasicChannelService implements ChannelService {
 
     @Override
     public ChannelResponseDto createPublicChannel(ChannelCreateRequestDto requestDto) {
-//        if (requestDto.getMemberIds() != null) {
-//            for (UUID memberId : requestDto.getMemberIds()) {
-//                if (Objects.isNull(userService.readUser(memberId))) {
-//                    throw new RuntimeException("존재하지 않는 유저: " + memberId);
-//                }
-//            }
-//        }
-        if (requestDto.getMemberIds() != null) {
-            requestDto.getMemberIds().stream()
-                    .filter(each -> Objects.isNull(userService.readUser(each)))
-                    .findFirst()
-                    .ifPresent(each -> {
-                        // throw new RuntimeException("존재하지 않는 유저입니다: ");
-                        throw new CustomRuntimeException(ExceptionType.USER_NOT_FOUND, each);
-                    });
-        }
-        List<UUID> memberIdList = requestDto.getMemberIds() == null ?
-                new ArrayList<>() : new ArrayList<>(requestDto.getMemberIds());
         Channel channel = requestDto.toEntity();
         channelRepository.save(channel);
         return ChannelResponseDto.from(channel);
@@ -65,8 +47,8 @@ public class BasicChannelService implements ChannelService {
 
     @Override
     public ChannelResponseDto createPrivateChannel(PrivateChannelCreateRequestDto requestDto) {
-        if (requestDto.getMemberIds() != null) {
-            requestDto.getMemberIds().stream()
+        if (requestDto.getParticipantIds() != null) {
+            requestDto.getParticipantIds().stream()
                     .filter(each -> Objects.isNull(userService.readUser(each)))
                     .findFirst()
                     .ifPresent(each -> {
@@ -78,8 +60,8 @@ public class BasicChannelService implements ChannelService {
         Channel privateChannel = requestDto.toEntity();
         channelRepository.save(privateChannel);
         // 참여한 유저별로 readStatus생성
-        if (requestDto.getMemberIds() != null) {
-            requestDto.getMemberIds().stream()
+        if (requestDto.getParticipantIds() != null) {
+            requestDto.getParticipantIds().stream()
                     .forEach(each -> {
                         ReadStatus readStatus = new ReadStatus(each, privateChannel.getId());
                         readStatusRepository.save(readStatus);
@@ -135,21 +117,11 @@ public class BasicChannelService implements ChannelService {
             // throw new IllegalArgumentException("PRIVATE 채널은 수정할 수 없습니다.");
             throw new CustomRuntimeException(ExceptionType.PRIVATE_CHANNEL_CANNOT_BE_UPDATED);
         }
-        if (Objects.isNull(requestDto.getChannelName()) || requestDto.getChannelName().isBlank()) {
+        if (Objects.isNull(requestDto.getNewName()) || requestDto.getNewName().isBlank()) {
             // throw new RuntimeException("유효하지 않은 채널명 입니다.");
             throw new CustomRuntimeException(ExceptionType.BAD_REQUEST);
         }
-        target.setChannelName(requestDto.getChannelName());
-
-        if (requestDto.getMemberIds() != null && !requestDto.getMemberIds().isEmpty()) {
-            for (UUID memberId : requestDto.getMemberIds()) {
-                if (Objects.isNull(userService.readUser(memberId))) {
-                    // throw new RuntimeException("존재하지 않는 유저입니다: " + memberId);
-                    throw new CustomRuntimeException(ExceptionType.USER_NOT_FOUND, memberId);
-                }
-            }
-            target.setMemberIds(new ArrayList<>(requestDto.getMemberIds()));
-        }
+        target.setChannelName(requestDto.getNewName());
         target.setUpdatedAt();
         channelRepository.save(target);
         Instant lastMessageAt = getLastMessageAt(id);

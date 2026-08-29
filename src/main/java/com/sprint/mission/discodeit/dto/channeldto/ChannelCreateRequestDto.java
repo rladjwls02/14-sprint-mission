@@ -15,29 +15,10 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ChannelCreateRequestDto {
-    private String channelName;
-    private List<UUID> memberIds;
-
-    /* 서비스 코드, 필드변경 없이 하려고 setter 메서드 추가,
-    프론트에서 쏴주는거 매핑해주려고
-    */
-    public void setName(String name) {
-        this.channelName = name;
-    }
-
-    public String getName() {
-        return this.channelName;
-    }
-
-    public void setParticipantIds(List<UUID> participantIds) {
-        this.memberIds = participantIds;
-    }
-
-    public List<UUID> getParticipantIds() {
-        return this.memberIds;
-    }
+    private String name;
+    private String description;
 
     public Channel toEntity() {
-        return new Channel(this.channelName, this.memberIds, ChannelType.PUBLIC);
+        return new Channel(this.name, List.of(), ChannelType.PUBLIC);
     }
 }

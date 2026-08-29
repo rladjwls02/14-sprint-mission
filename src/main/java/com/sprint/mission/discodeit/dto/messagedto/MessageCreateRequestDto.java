@@ -15,35 +15,16 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MessageCreateRequestDto {
-    private String values;
+    private String content;
     private UUID channelId;
-    private UUID senderId;
+    private UUID authorId;
     private List<BinaryContentCreateRequestDto> attachmentDtos;
 
-    public MessageCreateRequestDto(String values, UUID channelId, UUID senderId) {
-        this(values, channelId, senderId, null);
-    }
-
-    /* 서비스 코드, 필드변경 없이 하려고 setter 메서드 추가,
-    프론트에서 쏴주는거 매핑해주려고
-    */
-    public void setContent(String content) {
-        this.values = content;
-    }
-
-    public String getContent() {
-        return this.values;
-    }
-
-    public void setAuthorId(UUID authorId) {
-        this.senderId = authorId;
-    }
-
-    public UUID getAuthorId() {
-        return this.senderId;
+    public MessageCreateRequestDto(String content, UUID channelId, UUID authorId) {
+        this(content, channelId, authorId, null);
     }
 
     public Message toEntity() {
-        return new Message(this.values, this.channelId, this.senderId);
+        return new Message(this.content, this.channelId, this.authorId);
     }
 }

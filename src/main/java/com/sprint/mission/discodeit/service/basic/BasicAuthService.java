@@ -23,10 +23,10 @@ public class BasicAuthService implements AuthService {
 
     @Override
     public UserResponseDto login(AuthCreateRequestDto authCreateRequestDto) {
-        User user = userRepository.findByName(authCreateRequestDto.getName());
+        User user = userRepository.findByName(authCreateRequestDto.getUsername());
         if (Objects.isNull(user)) {
             // throw new RuntimeException("올바른 이름을 입력해주세요.");
-            throw new CustomRuntimeException(ExceptionType.USER_BY_USERNAME_NOT_FOUND, authCreateRequestDto.getName());
+            throw new CustomRuntimeException(ExceptionType.USER_BY_USERNAME_NOT_FOUND, authCreateRequestDto.getUsername());
         }
         //비번검증
         if (user.getPassword().equals(authCreateRequestDto.getPassword())) {

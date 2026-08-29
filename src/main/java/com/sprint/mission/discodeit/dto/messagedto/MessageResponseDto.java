@@ -8,7 +8,6 @@ import lombok.Getter;
 import lombok.experimental.FieldDefaults;
 
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -17,10 +16,10 @@ import java.util.UUID;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class MessageResponseDto {
     UUID id;
-    String values;
+    String content;
     UUID channelId;
-    UUID senderId;
-    List<BinaryContentResponseDto> addedContents;
+    UUID authorId;
+    List<BinaryContentResponseDto> attachmentIds;
     Instant createdAt;
     Instant updatedAt;
 
@@ -35,22 +34,4 @@ public class MessageResponseDto {
                 message.getUpdatedAt()
         );
     }
-    // 게터로 프론트에 필드 쏴주기
-    public String getContent() {
-        return values;
-    }
-
-    public UUID getAuthorId() {
-        return senderId;
-    }
-
-    public List<UUID> getAttachmentIds() {
-        if (addedContents == null) {
-            return new ArrayList<>();
-        }
-        return addedContents.stream()
-                .map(BinaryContentResponseDto::getId)
-                .toList();
-    }
-
 }

@@ -63,8 +63,8 @@ public class BasicUserStatusService implements UserStatusService {
             // throw new RuntimeException("해당 UserStatus가 존재하지 않습니다: " );
             throw new CustomRuntimeException(ExceptionType.USER_STATUS_NOT_FOUND, id);
         }
-        if (requestDto.getLastActiveAt() != null) {
-            target.setLastActiveAt(requestDto.getLastActiveAt());
+        if (requestDto.getNewLastActiveAt() != null) {
+            target.setLastActiveAt(requestDto.getNewLastActiveAt());
         } else {
             target.setLastActiveAt();
         }
@@ -80,8 +80,8 @@ public class BasicUserStatusService implements UserStatusService {
             // throw new RuntimeException("해당 User의 UserStatus가 존재하지 않습니다: " );
             throw new CustomRuntimeException(ExceptionType.USER_STATUS_NOT_FOUND, userId);
         }
-        if (requestDto.getLastActiveAt() != null) {
-            target.setLastActiveAt(requestDto.getLastActiveAt());
+        if (requestDto.getNewLastActiveAt() != null) {
+            target.setLastActiveAt(requestDto.getNewLastActiveAt());
         } else {
             target.setLastActiveAt();
         }
