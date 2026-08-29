@@ -11,6 +11,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class AuthCreateRequestDto {
     String name;
+    String password;
 
     /* 서비스 코드, 필드변경 없이 하려고 setter 메서드 추가,
     프론트에서 쏴주는거 매핑해주려고

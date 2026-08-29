@@ -28,6 +28,10 @@ public class BasicAuthService implements AuthService {
             // throw new RuntimeException("올바른 이름을 입력해주세요.");
             throw new CustomRuntimeException(ExceptionType.USER_BY_USERNAME_NOT_FOUND, authCreateRequestDto.getName());
         }
+        //비번검증
+        if (user.getPassword().equals(authCreateRequestDto.getPassword())) {
+            throw new CustomRuntimeException(ExceptionType.WRONG_PASSWORD);
+        }
         UserStatus userStatus = userStatusRepository.findByUserId(user.getId());
         return UserResponseDto.from(user, userStatus);
     }

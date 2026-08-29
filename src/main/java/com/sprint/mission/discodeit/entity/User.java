@@ -16,14 +16,16 @@ public class User implements Serializable {
 
     private String name;
     private final String email;
+    private String password;
 
     private final UUID id;
     private final Instant createdAt;
     private Instant updatedAt;
 
-    public User(String email, String name) {
+    public User(String email, String name, String password) {
         this.name = name;
         this.email = email;
+        this.password = password;
 
         this.id = UUID.randomUUID();
         this.createdAt = Instant.now();

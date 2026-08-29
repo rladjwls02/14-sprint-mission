@@ -21,8 +21,8 @@ public class UserCreateRequestDto {
         this(email, username, password, null);
     }
 
-    //TODO:나중에 password도 넣어야됌.. 일단은 dto만 맞추기
+    //Done:나중에 password도 넣어야됌.. 일단은 dto만 맞추기
     public User toEntity() {
-        return new User(this.email, this.username);
+        return new User(this.email, this.username, this.password);
     }
 }
