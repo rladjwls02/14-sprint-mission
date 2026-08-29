@@ -23,14 +23,14 @@ public class MessageController {
     private final MultipartFileMapper multipartFileMapper;
 
     // URL 충돌방지를 위해 consumes로 미디어 타입 명시
-    @RequestMapping(method = RequestMethod.POST, value = "", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public MessageResponseDto send(@RequestBody MessageCreateRequestDto dto) {
         return messageService.createMessage(dto);
     }
 
     // URL 충돌방지를 위해 consumes로 미디어 타입 명시
-    @RequestMapping(method = RequestMethod.POST, value = "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public MessageResponseDto sendWithAttachments(@RequestPart("messageCreateRequest") MessageCreateRequestDto dto,
                                                   @RequestPart(value = "attachments", required = false) List<MultipartFile> attachments) {
@@ -41,20 +41,20 @@ public class MessageController {
         return messageService.createMessage(dto);
     }
 
-    @RequestMapping(method = RequestMethod.PATCH, value = "/{messageId}")
-    public MessageResponseDto modify(@PathVariable UUID messageId,
+    @PatchMapping("/{messageId}")
+    public MessageResponseDto update(@PathVariable UUID messageId,
                                      @RequestBody MessageUpdateRequestDto dto) {
         return messageService.updateMessage(messageId, dto);
     }
 
-    @RequestMapping(method = RequestMethod.DELETE, value = "/{messageId}")
+    @DeleteMapping("/{messageId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable UUID messageId) {
         messageService.deleteMessage(messageId);
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "")
-    public List<MessageResponseDto> getMessageListByChannelId(@RequestParam UUID channelId) {
+    @GetMapping
+    public List<MessageResponseDto> findAll(@RequestParam UUID channelId) {
         return messageService.findAllByChannelId(channelId);
     }
 }

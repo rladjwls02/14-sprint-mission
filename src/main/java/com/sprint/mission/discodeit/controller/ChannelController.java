@@ -18,32 +18,32 @@ import java.util.UUID;
 public class ChannelController {
     private final ChannelService channelService;
 
-    @RequestMapping(method = RequestMethod.POST, value = "/public")
+    @PostMapping("/public")
     @ResponseStatus(HttpStatus.CREATED)
     public ChannelResponseDto createPublic(@RequestBody ChannelCreateRequestDto dto) {
         return channelService.createPublicChannel(dto);
     }
 
-    @RequestMapping(method = RequestMethod.POST, value = "/private")
+    @PostMapping("/private")
     @ResponseStatus(HttpStatus.CREATED)
     public ChannelResponseDto createPrivate(@RequestBody PrivateChannelCreateRequestDto dto) {
         return channelService.createPrivateChannel(dto);
     }
 
-    @RequestMapping(method = RequestMethod.PATCH, value = "/{channelId}")
+    @PatchMapping("/{channelId}")
     public ChannelResponseDto update(@PathVariable UUID channelId,
                                      @RequestBody ChannelUpdateRequestDto dto) {
         return channelService.updateChannel(channelId, dto);
     }
 
-    @RequestMapping(method = RequestMethod.DELETE, value = "/{channelId}")
+    @DeleteMapping("/{channelId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable UUID channelId) {
         channelService.deleteChannel(channelId);
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "")
-    public List<ChannelResponseDto> getChannelListByUserId(@RequestParam UUID userId) {
+    @GetMapping
+    public List<ChannelResponseDto> findAll(@RequestParam UUID userId) {
         return channelService.findAllByUserId(userId);
     }
 }

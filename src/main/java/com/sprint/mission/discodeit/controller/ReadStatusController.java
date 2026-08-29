@@ -17,20 +17,20 @@ import java.util.UUID;
 public class ReadStatusController {
     private final ReadStatusService readStatusService;
 
-    @RequestMapping(method = RequestMethod.POST, value = "")
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ReadStatusResponseDto create(@RequestBody ReadStatusCreateRequestDto dto) {
         return readStatusService.createReadStatus(dto);
     }
 
-    @RequestMapping(method = RequestMethod.PATCH, value = "/{readStatusId}")
-    public ReadStatusResponseDto modify(@PathVariable UUID readStatusId,
+    @PatchMapping("/{readStatusId}")
+    public ReadStatusResponseDto update(@PathVariable UUID readStatusId,
                                         @RequestBody ReadStatusUpdateRequestDto dto) {
         return readStatusService.updateReadStatus(readStatusId, dto);
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "")
-    public List<ReadStatusResponseDto> read(@RequestParam UUID userId) {
+    @GetMapping
+    public List<ReadStatusResponseDto> findAll(@RequestParam UUID userId) {
         return readStatusService.findAllByUserId(userId);
     }
 }

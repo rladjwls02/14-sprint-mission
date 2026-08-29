@@ -29,7 +29,7 @@ public class UserController {
     private final MultipartFileMapper multipartFileMapper;
 
     // URL 충돌방지를 위해 consumes로 미디어 타입 명시
-    @RequestMapping(method = RequestMethod.POST, value = "", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public UserResponseDto create(@RequestBody UserCreateRequestDto dto) {
         UserResponseDto newUser = userService.createUser(dto);
@@ -38,7 +38,7 @@ public class UserController {
     }
 
     // URL 충돌방지를 위해 consumes로 미디어 타입 명시
-    @RequestMapping(method = RequestMethod.POST, value = "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public UserResponseDto createWithProfile(@RequestPart("userCreateRequest") UserCreateRequestDto dto,
                                              @RequestPart(value = "profile", required = false) MultipartFile profile) {
@@ -51,19 +51,19 @@ public class UserController {
         return newUser;
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "")
-    public List<UserResponseDto> getList() {
+    @GetMapping
+    public List<UserResponseDto> findAll() {
         return userService.readAllUser();
     }
     // URL 충돌방지를 위해 consumes로 미디어 타입 명시
-    @RequestMapping(method = RequestMethod.PATCH, value = "/{userId}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PatchMapping(value = "/{userId}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public UserResponseDto update(@PathVariable UUID userId,
                                   @RequestBody UserUpdateRequestDto dto) {
         return userService.updateUser(userId, dto);
     }
 
     // URL 충돌방지를 위해 consumes로 미디어 타입 명시
-    @RequestMapping(method = RequestMethod.PATCH, value = "/{userId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PatchMapping(value = "/{userId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public UserResponseDto updateWithProfile(@PathVariable UUID userId,
                                              @RequestPart("userUpdateRequest") UserUpdateRequestDto dto,
                                              @RequestPart(value = "profile", required = false) MultipartFile profile) {
@@ -74,13 +74,13 @@ public class UserController {
         return userService.updateUser(userId, dto);
     }
 
-    @RequestMapping(method = RequestMethod.DELETE, value = "/{userId}")
+    @DeleteMapping("/{userId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable UUID userId) {
         userService.deleteUser(userId);
     }
 
-    @RequestMapping(method = RequestMethod.PATCH, value = "/{userId}/userStatus")
+    @PatchMapping("/{userId}/userStatus")
     public UserStatusResponseDto updateStatus(@PathVariable UUID userId,
                                                @RequestBody UserStatusUpdateRequestDto dto) {
         return userStatusService.updateUserStatusByUserId(userId, dto);
