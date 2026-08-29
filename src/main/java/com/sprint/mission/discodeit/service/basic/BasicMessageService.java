@@ -5,10 +5,8 @@ import com.sprint.mission.discodeit.dto.binarycontentdto.BinaryContentResponseDt
 import com.sprint.mission.discodeit.dto.messagedto.MessageCreateRequestDto;
 import com.sprint.mission.discodeit.dto.messagedto.MessageResponseDto;
 import com.sprint.mission.discodeit.dto.messagedto.MessageUpdateRequestDto;
-import com.sprint.mission.discodeit.entity.BinaryContent;
-import com.sprint.mission.discodeit.entity.Channel;
-import com.sprint.mission.discodeit.entity.ChannelType;
-import com.sprint.mission.discodeit.entity.Message;
+
+import com.sprint.mission.discodeit.entity.*;
 import com.sprint.mission.discodeit.exception.CustomRuntimeException;
 import com.sprint.mission.discodeit.exception.ExceptionType;
 import com.sprint.mission.discodeit.repository.BinaryContentRepository;
@@ -43,16 +41,16 @@ public class BasicMessageService implements MessageService {
 
     @Override
     public MessageResponseDto createMessage(MessageCreateRequestDto requestDto) {
-        if (Objects.isNull(userRepository.findById(requestDto.getAuthorId()))
-                || Objects.isNull(channelRepository.findById(requestDto.getChannelId()))) {
-            // throw new RuntimeException("유효하지 않은 채널 또는 유저입니다");
-            if (Objects.isNull(userRepository.findById(requestDto.getAuthorId()))) {
-                throw new CustomRuntimeException(ExceptionType.USER_NOT_FOUND, requestDto.getAuthorId());
-            }
-            throw new CustomRuntimeException(ExceptionType.CHANNEL_NOT_FOUND, requestDto.getChannelId());
+        User sender = userRepository.findById(requestDto.getAuthorId());
+        if (Objects.isNull(sender)) {
+            throw new CustomRuntimeException(ExceptionType.USER_NOT_FOUND, requestDto.getAuthorId());
         }
 
         Channel channel = channelRepository.findById(requestDto.getChannelId());
+        if (Objects.isNull(channel)) {
+            throw new CustomRuntimeException(ExceptionType.CHANNEL_NOT_FOUND, requestDto.getChannelId());
+        }
+
         if (channel.getChannelType() == ChannelType.PUBLIC || (channel.getMemberIds() != null && channel.getMemberIds().contains(requestDto.getAuthorId()))) {
             Message message = new Message(requestDto.getContent(), requestDto.getChannelId(), requestDto.getAuthorId());
             messageRepository.save(message);
