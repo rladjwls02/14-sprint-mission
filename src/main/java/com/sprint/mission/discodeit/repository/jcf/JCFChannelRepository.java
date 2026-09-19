@@ -2,45 +2,44 @@ package com.sprint.mission.discodeit.repository.jcf;
 
 import com.sprint.mission.discodeit.entity.Channel;
 import com.sprint.mission.discodeit.repository.ChannelRepository;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
+@ConditionalOnProperty(name = "discodeit.repository.type", havingValue = "jcf", matchIfMissing = true)
 @Repository
 public class JCFChannelRepository implements ChannelRepository {
-    final List<Channel> channelList;
 
-    public JCFChannelRepository() {
-        this.channelList = new ArrayList<>();
-    }
+  private final Map<UUID, Channel> data;
 
-    @Override
-    public void save(Channel channel) {
-        channelList.add(channel);
-    }
+  public JCFChannelRepository() {
+    this.data = new HashMap<>();
+  }
 
-    @Override
-    public Channel findById(UUID id) {
-        for (Channel each : channelList) {
-            if (each.getId().equals(id)) {
-                return each;
-            }
-        }
-        return null;
-    }
+  @Override
+  public Channel save(Channel channel) {
+    this.data.put(channel.getId(), channel);
+    return channel;
+  }
 
-    @Override
-    public List<Channel> findAll() {
-        return channelList;
-    }
+  @Override
+  public Optional<Channel> findById(UUID id) {
+    return Optional.ofNullable(this.data.get(id));
+  }
 
-    @Override
-    public void delete(UUID id) {
-        Channel target = findById(id);
-        if (target != null) {
-            channelList.remove(target);
-        }
-    }
+  @Override
+  public List<Channel> findAll() {
+    return this.data.values().stream().toList();
+  }
+
+  @Override
+  public boolean existsById(UUID id) {
+    return this.data.containsKey(id);
+  }
+
+  @Override
+  public void deleteById(UUID id) {
+    this.data.remove(id);
+  }
 }

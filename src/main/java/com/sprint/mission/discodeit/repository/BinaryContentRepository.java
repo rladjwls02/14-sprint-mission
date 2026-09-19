@@ -3,25 +3,18 @@ package com.sprint.mission.discodeit.repository;
 import com.sprint.mission.discodeit.entity.BinaryContent;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface BinaryContentRepository {
-    //메모리 업데이트 반환값이 필요없다고 생각함
-    void save(BinaryContent binaryContent);
 
-    //메모리에서 id로 컨텐츠 가져오기
-    BinaryContent findById(UUID id);
-    // userId로 컨텐츠 가져오기
-    BinaryContent findByUserId(UUID userId);
+  BinaryContent save(BinaryContent binaryContent);
 
-    List<BinaryContent> findAllByMessageId(UUID messageId);
+  Optional<BinaryContent> findById(UUID id);
 
-    //userid랑 channelid로 해당 유저가 해당채널에서 마지막 읽기상태를 가져옴
-    BinaryContent findByUserIdAndChannelId(UUID userId, UUID channelId);
+  List<BinaryContent> findAllByIdIn(List<UUID> ids);
 
-    //컨텐츠 목록 가져오기
-    List<BinaryContent> findAll();
+  boolean existsById(UUID id);
 
-    //메모리에서 컨텐츠 지우기
-    void delete(UUID id);
+  void deleteById(UUID id);
 }

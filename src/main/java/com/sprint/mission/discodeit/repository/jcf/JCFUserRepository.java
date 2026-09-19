@@ -2,63 +2,61 @@ package com.sprint.mission.discodeit.repository.jcf;
 
 import com.sprint.mission.discodeit.entity.User;
 import com.sprint.mission.discodeit.repository.UserRepository;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
+@ConditionalOnProperty(name = "discodeit.repository.type", havingValue = "jcf", matchIfMissing = true)
 @Repository
 public class JCFUserRepository implements UserRepository {
-    final List<User> userList;
 
-    public JCFUserRepository() {
-        this.userList = new ArrayList<>();
-    }
+  private final Map<UUID, User> data;
 
-    @Override
-    public void save(User user) {
-        userList.add(user);
-    }
+  public JCFUserRepository() {
+    this.data = new HashMap<>();
+  }
 
-    @Override
-    public User findById(UUID id) {
-        for (User each : userList) {
-            if (each.getId().equals(id)) {
-                return each;
-            }
-        }
-        return null;
-    }
+  @Override
+  public User save(User user) {
+    this.data.put(user.getId(), user);
+    return user;
+  }
 
-    @Override
-    public List<User> findAll() {
-        return this.userList;
-    }
+  @Override
+  public Optional<User> findById(UUID id) {
+    return Optional.ofNullable(this.data.get(id));
+  }
 
-    @Override
-    public void delete(UUID id) {
-        User target = findById(id);
-        if (target != null) {
-            userList.remove(target);
-        }
-    }
+  @Override
+  public Optional<User> findByUsername(String username) {
+    return this.findAll().stream()
+        .filter(user -> user.getUsername().equals(username))
+        .findFirst();
+  }
 
-    @Override
-    public User findByEmail(String email) {
-        User target = userList.stream()
-                .filter(each -> each.getEmail().equals(email))
-                .findFirst()
-                .orElse(null);
-        return target;
-    }
+  @Override
+  public List<User> findAll() {
+    return this.data.values().stream().toList();
+  }
 
-    @Override
-    public User findByName(String name){
-        User target = userList.stream()
-                .filter(each -> each.getName().equals(name))
-                .findFirst()
-                .orElse(null);
-        return target;
-    };
+  @Override
+  public boolean existsById(UUID id) {
+    return this.data.containsKey(id);
+  }
+
+  @Override
+  public void deleteById(UUID id) {
+    this.data.remove(id);
+  }
+
+  @Override
+  public boolean existsByEmail(String email) {
+    return this.findAll().stream().anyMatch(user -> user.getEmail().equals(email));
+  }
+
+  @Override
+  public boolean existsByUsername(String username) {
+    return this.findAll().stream().anyMatch(user -> user.getUsername().equals(username));
+  }
 }
