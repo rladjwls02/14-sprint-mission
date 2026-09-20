@@ -1,35 +1,49 @@
 package com.sprint.mission.discodeit.entity;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import lombok.AccessLevel;
 import lombok.Getter;
 
 import java.io.Serializable;
 import java.time.Instant;
-import java.util.List;
 import java.util.UUID;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Getter
+@Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Message implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
+  @Id
   private UUID id;
   private Instant createdAt;
   private Instant updatedAt;
   //
   private String content;
   //
-  private UUID channelId;
-  private UUID authorId;
-  private List<UUID> attachmentIds;
+  @ManyToOne
+  @JoinColumn(name = "channel_id", nullable = false)
+  @OnDelete(action = OnDeleteAction.CASCADE)
+  private Channel channel;
+  @ManyToOne
+  @JoinColumn(name = "author_id", nullable = false)
+  @OnDelete(action = OnDeleteAction.SET_NULL)
+  private User author;
 
-  public Message(String content, UUID channelId, UUID authorId, List<UUID> attachmentIds) {
+  public Message(String content, Channel channel, User author) {
     this.id = UUID.randomUUID();
     this.createdAt = Instant.now();
     //
     this.content = content;
-    this.channelId = channelId;
-    this.authorId = authorId;
-    this.attachmentIds = attachmentIds;
+    this.channel = channel;
+    this.author = author;
   }
 
   public void update(String newContent) {

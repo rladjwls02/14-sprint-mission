@@ -1,36 +1,55 @@
 package com.sprint.mission.discodeit.entity;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
+import lombok.AccessLevel;
 import lombok.Getter;
 
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.UUID;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
+@Entity
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
+  @Id
   private UUID id;
   private Instant createdAt;
   private Instant updatedAt;
   //
+  @Column(length = 50)
   private String username;
+  @Column(length = 100)
   private String email;
+  @Column(length = 60)
   private String password;
-  private UUID profileId;     // BinaryContent
 
-  public User(String username, String email, String password, UUID profileId) {
+  @OneToOne
+  @JoinColumn(name = "profile_id", nullable = true)
+  @OnDelete(action = OnDeleteAction.SET_NULL) //삭제하면 널처리
+  private BinaryContent profile;     // BinaryContent
+
+  public User(String username, String email, String password, BinaryContent profile) {
     this.id = UUID.randomUUID();
     this.createdAt = Instant.now();
     //
     this.username = username;
     this.email = email;
     this.password = password;
-    this.profileId = profileId;
+    this.profile = profile;
   }
 
-  public void update(String newUsername, String newEmail, String newPassword, UUID newProfileId) {
+  public void update(String newUsername, String newEmail, String newPassword, BinaryContent newProfile) {
     boolean anyValueUpdated = false;
     if (newUsername != null && !newUsername.equals(this.username)) {
       this.username = newUsername;
@@ -44,8 +63,8 @@ public class User implements Serializable {
       this.password = newPassword;
       anyValueUpdated = true;
     }
-    if (newProfileId != null && !newProfileId.equals(this.profileId)) {
-      this.profileId = newProfileId;
+    if (newProfile != null && !newProfile.equals(this.profile)) {
+      this.profile = newProfile;
       anyValueUpdated = true;
     }
 
