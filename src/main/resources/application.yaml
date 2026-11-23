@@ -27,6 +27,10 @@ discodeit:
       bucket: ${AWS_S3_BUCKET:}
       presigned-url-expiration: ${AWS_S3_PRESIGNED_URL_EXPIRATION:600}
     path: ${discodeit.storage.local.root-path}
+  jwt:
+    access-token:
+      secret: ${JWT_ACCESS_SECRET}
+      expiration-ms: ${JWT_ACCESS_EXPIRATION_MS}
 
 management:
   endpoints:
