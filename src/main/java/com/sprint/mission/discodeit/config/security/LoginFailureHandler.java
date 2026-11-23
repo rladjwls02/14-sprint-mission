@@ -1,4 +1,4 @@
-package com.sprint.mission.discodeit.config;
+package com.sprint.mission.discodeit.config.security;
 
 import com.sprint.mission.discodeit.common.ErrorResponse;
 import jakarta.servlet.ServletException;
