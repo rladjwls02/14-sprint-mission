@@ -96,4 +96,13 @@ public class JwtTokenProvider {
             return false;
         }
     }
+
+    public String getUsernameFromToken(String token) {
+        try {
+            SignedJWT signedJWT = SignedJWT.parse(token);
+            return signedJWT.getJWTClaimsSet().getSubject();
+        } catch (ParseException e) {
+            throw new IllegalArgumentException("Invalid JWT token", e);
+        }
+    }
 }

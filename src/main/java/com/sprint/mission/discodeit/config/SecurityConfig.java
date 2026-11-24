@@ -1,6 +1,7 @@
 package com.sprint.mission.discodeit.config;
 
 import com.sprint.mission.discodeit.common.ErrorResponse;
+import com.sprint.mission.discodeit.config.security.JwtAuthenticationFilter;
 import com.sprint.mission.discodeit.config.security.JwtLoginSuccessHandler;
 import com.sprint.mission.discodeit.config.security.LoginFailureHandler;
 import com.sprint.mission.discodeit.config.security.SpaCsrfTokenRequestHandler;
@@ -29,6 +30,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import tools.jackson.databind.ObjectMapper;
@@ -38,6 +40,7 @@ import tools.jackson.databind.ObjectMapper;
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final JwtLoginSuccessHandler successHandler;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final LoginFailureHandler failureHandler;
     private final ObjectMapper objectMapper;
 
@@ -80,6 +83,7 @@ public class SecurityConfig {
         http.sessionManagement(session -> session
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         );
+        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 
