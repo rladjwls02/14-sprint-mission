@@ -4,6 +4,7 @@ import com.nimbusds.jose.JOSEException;
 import com.sprint.mission.discodeit.dto.data.JwtDto;
 import com.sprint.mission.discodeit.entity.DiscodeitUserDetails;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -30,6 +31,13 @@ public class JwtLoginSuccessHandler implements AuthenticationSuccessHandler {
 
         try {
             String accessToken = jwtTokenProvider.generateAccessToken(userDetails);
+            String refreshToken = jwtTokenProvider.generateRefreshToken(userDetails);
+
+            /* 리프레시토큰이랑 액세스토큰 동시생성해야됌
+             * 리프레시토큰 먼저 생성  */
+            Cookie refreshCookie = jwtTokenProvider.generateRefreshTokenCookie(refreshToken);
+            response.addCookie(refreshCookie);
+
             JwtDto jwtDto = new JwtDto(userDetails.getUserDto(), accessToken);
 
             log.info("로그인 성공 (200) - username: {}", userDetails.getUsername());

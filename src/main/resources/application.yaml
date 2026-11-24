@@ -31,6 +31,9 @@ discodeit:
     access-token:
       secret: ${JWT_ACCESS_SECRET}
       expiration-ms: ${JWT_ACCESS_EXPIRATION_MS}
+    refresh-token:
+      secret: ${JWT_REFRESH_SECRET}
+      expiration-ms: ${JWT_REFRESH_EXPIRATION_MS}
 
 management:
   endpoints:
