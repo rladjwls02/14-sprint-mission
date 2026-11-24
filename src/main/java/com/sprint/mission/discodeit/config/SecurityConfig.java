@@ -1,8 +1,8 @@
 package com.sprint.mission.discodeit.config;
 
 import com.sprint.mission.discodeit.common.ErrorResponse;
+import com.sprint.mission.discodeit.config.security.JwtLoginSuccessHandler;
 import com.sprint.mission.discodeit.config.security.LoginFailureHandler;
-import com.sprint.mission.discodeit.config.security.LoginSuccessHandler;
 import com.sprint.mission.discodeit.config.security.SpaCsrfTokenRequestHandler;
 import com.sprint.mission.discodeit.entity.Role;
 import com.sprint.mission.discodeit.entity.User;
@@ -25,6 +25,7 @@ import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -36,7 +37,7 @@ import tools.jackson.databind.ObjectMapper;
 @EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-    private final LoginSuccessHandler successHandler;
+    private final JwtLoginSuccessHandler successHandler;
     private final LoginFailureHandler failureHandler;
     private final ObjectMapper objectMapper;
 
@@ -75,6 +76,9 @@ public class SecurityConfig {
         http.exceptionHandling(ex -> ex
             .authenticationEntryPoint((req, res, e) -> writeErrorResponse(res, HttpStatus.UNAUTHORIZED, "UNAUTHORIZED", e))
             .accessDeniedHandler((req, res, e) -> writeErrorResponse(res, HttpStatus.FORBIDDEN, "ACCESS_DENIED", e))
+        );
+        http.sessionManagement(session -> session
+            .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         );
         return http.build();
     }
