@@ -6,6 +6,7 @@ import com.sprint.mission.discodeit.common.exception.DiscodeitException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -70,6 +71,26 @@ public class GlobalExceptionHandler {
         errorCode.toString(),
         errorCode.getMessage(),
         details,
+        e.getClass().getSimpleName(),
+        errorCode.getStatus()
+    );
+    return ResponseEntity
+        .status(errorCode.getStatus())
+        .body(errorResponse);
+  }
+
+  @ExceptionHandler(HttpMessageNotReadableException.class)
+  public ResponseEntity<ErrorResponse> handleHttpMessageNotReadableException(
+      HttpMessageNotReadableException e
+  ) {
+    ErrorCode errorCode = ErrorCode.INCORRECT_REQUEST;
+    log.atLevel(errorCode.getLevel())
+        .log("요청 본문 파싱 실패 - code: {}, message: {}", errorCode, e.getMessage());
+    ErrorResponse errorResponse = new ErrorResponse(
+        Instant.now(),
+        errorCode.toString(),
+        errorCode.getMessage(),
+        Map.of(),
         e.getClass().getSimpleName(),
         errorCode.getStatus()
     );
