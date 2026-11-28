@@ -9,6 +9,7 @@ import static org.mockito.BDDMockito.then;
 
 import com.sprint.mission.discodeit.common.exception.user.EmailAlreadyExistsException;
 import com.sprint.mission.discodeit.common.exception.user.UserNotFoundException;
+import com.sprint.mission.discodeit.config.security.JwtRegistry;
 import com.sprint.mission.discodeit.dto.data.UserDto;
 import com.sprint.mission.discodeit.dto.request.UserCreateRequest;
 import com.sprint.mission.discodeit.dto.request.UserUpdateRequest;
@@ -41,6 +42,8 @@ public class UserUnitTest {
     private BinaryContentStorage binaryContentStorage;
     @Mock
     private PasswordEncoder passwordEncoder;
+    @Mock
+    private JwtRegistry jwtRegistry;
 
     private BasicUserService userService;
 
@@ -52,7 +55,8 @@ public class UserUnitTest {
             userStatusRepository,
             new UserMapper(),
             binaryContentStorage,
-            passwordEncoder
+            passwordEncoder,
+            jwtRegistry
         );
     }
 

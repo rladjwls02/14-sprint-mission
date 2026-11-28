@@ -2,6 +2,7 @@ package com.sprint.mission.discodeit.config.security;
 
 import com.nimbusds.jose.JOSEException;
 import com.sprint.mission.discodeit.dto.data.JwtDto;
+import com.sprint.mission.discodeit.dto.data.JwtInformation;
 import com.sprint.mission.discodeit.entity.DiscodeitUserDetails;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -23,6 +24,7 @@ import tools.jackson.databind.ObjectMapper;
 public class JwtLoginSuccessHandler implements AuthenticationSuccessHandler {
     private final ObjectMapper objectMapper;
     private final JwtTokenProvider jwtTokenProvider;
+    private final JwtRegistry jwtRegistry;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
@@ -32,6 +34,14 @@ public class JwtLoginSuccessHandler implements AuthenticationSuccessHandler {
         try {
             String accessToken = jwtTokenProvider.generateAccessToken(userDetails);
             String refreshToken = jwtTokenProvider.generateRefreshToken(userDetails);
+
+            /* 레지스트리에 등록 (최대 동시 로그인 수 1 제한 -> 기존 세션 무효화) */
+            JwtInformation jwtInformation = new JwtInformation(
+                userDetails.getUserDto(),
+                accessToken,
+                refreshToken
+            );
+            jwtRegistry.registerJwtInformation(jwtInformation);
 
             /* 리프레시토큰이랑 액세스토큰 동시생성해야됌
              * 리프레시토큰 먼저 생성  */

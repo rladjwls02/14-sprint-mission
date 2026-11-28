@@ -120,6 +120,16 @@ public class JwtTokenProvider {
         }
     }
 
+    public UUID getUserIdFromToken(String token) {
+        try {
+            SignedJWT signedJWT = SignedJWT.parse(token);
+            String userId = signedJWT.getJWTClaimsSet().getStringClaim("userId");
+            return UUID.fromString(userId);
+        } catch (ParseException | IllegalArgumentException e) {
+            throw new IllegalArgumentException("Invalid JWT token", e);
+        }
+    }
+
     public Date getIssueTimeFromToken(String token) {
         try {
             SignedJWT signedJWT = SignedJWT.parse(token);

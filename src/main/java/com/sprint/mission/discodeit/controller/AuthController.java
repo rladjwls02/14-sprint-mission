@@ -56,10 +56,10 @@ public class AuthController implements AuthApi {
       HttpServletResponse response
   ) {
     JwtInformation jwtInformation = authService.refreshToken(refreshToken);
-    Cookie refreshCookie = jwtTokenProvider.generateRefreshTokenCookie(jwtInformation.refreshToken());
+    Cookie refreshCookie = jwtTokenProvider.generateRefreshTokenCookie(jwtInformation.getRefreshToken());
     response.addCookie(refreshCookie);
 
-    JwtDto body = new JwtDto(jwtInformation.userDto(), jwtInformation.accessToken());
+    JwtDto body = new JwtDto(jwtInformation.getUserDto(), jwtInformation.getAccessToken());
     return ResponseEntity
         .status(HttpStatus.OK)
         .body(body);

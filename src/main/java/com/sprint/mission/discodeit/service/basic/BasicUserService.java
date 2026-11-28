@@ -3,6 +3,7 @@ package com.sprint.mission.discodeit.service.basic;
 import com.sprint.mission.discodeit.common.exception.user.EmailAlreadyExistsException;
 import com.sprint.mission.discodeit.common.exception.user.UserNotFoundException;
 import com.sprint.mission.discodeit.common.exception.user.UsernameAlreadyExistsException;
+import com.sprint.mission.discodeit.config.security.JwtRegistry;
 import com.sprint.mission.discodeit.dto.data.UserDto;
 import com.sprint.mission.discodeit.dto.request.BinaryContentCreateRequest;
 import com.sprint.mission.discodeit.dto.request.UserCreateRequest;
@@ -41,6 +42,7 @@ public class BasicUserService implements UserService {
   private final UserMapper userMapper;
   private final BinaryContentStorage binaryContentStorage;
   private final PasswordEncoder passwordEncoder;
+  private final JwtRegistry jwtRegistry;
 
   @Override
   @Transactional
@@ -169,10 +171,7 @@ public class BasicUserService implements UserService {
   }
 
   private UserDto toDto(User user) {
-    Boolean online = userStatusRepository.findByUserId(user.getId())
-        .map(UserStatus::isOnline)
-        .orElse(null);
-
+    Boolean online = jwtRegistry.hasActiveJwtInformationByUserId(user.getId());
     return userMapper.toDto(user, online);
   }
 }

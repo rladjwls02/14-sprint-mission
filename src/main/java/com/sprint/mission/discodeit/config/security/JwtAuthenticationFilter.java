@@ -24,14 +24,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final UserDetailsService userDetailsService;
+    private final JwtRegistry jwtRegistry;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
         FilterChain filterChain) throws ServletException, IOException {
         String jwt = resolveToken(request);
 
-        /* 토큰값이 들어있고, 토큰이 유효하다면 */
-        if (StringUtils.hasText(jwt) && jwtTokenProvider.validateAccessToken(jwt)) {
+        /* 토큰값이 들어있고, 토큰이 유효하며, 레지스트리에 활성 상태로 등록되어 있다면 */
+        if (StringUtils.hasText(jwt)
+            && jwtTokenProvider.validateAccessToken(jwt)
+            && jwtRegistry.hasActiveJwtInformationByAccessToken(jwt)) {
             String username = jwtTokenProvider.getUsernameFromToken(jwt);
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
