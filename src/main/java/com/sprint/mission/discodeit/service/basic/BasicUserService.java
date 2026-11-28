@@ -167,6 +167,7 @@ public class BasicUserService implements UserService {
 
     userStatusRepository.deleteByUserId(userId);
     userRepository.deleteById(userId);
+    jwtRegistry.invalidateJwtInformationByUserId(userId);
 //    log.debug("유저 삭제 요청 - userId: {}, 유저 이름: {} ", userId, user.getUsername());
   }
 

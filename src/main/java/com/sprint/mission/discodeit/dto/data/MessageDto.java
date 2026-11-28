@@ -18,16 +18,18 @@ public record MessageDto(
     UserDto author
 ) {
   public static MessageDto toDto(Message message, List<BinaryContent> attachments) {
+    UUID authorId = message.getAuthor() != null ? message.getAuthor().getId() : null;
+    UserDto author = message.getAuthor() != null ? UserDto.toDto(message.getAuthor(), null) : null;
     return new MessageDto(
         message.getId(),
         message.getCreatedAt(),
         message.getUpdatedAt(),
         message.getContent(),
         message.getChannel().getId(),
-        message.getAuthor().getId(),
+        authorId,
         attachments.stream().map(BinaryContent::getId).toList(),
         attachments.stream().map(BinaryContentDto::toDto).toList(),
-        UserDto.toDto(message.getAuthor(), null)
+        author
     );
   }
 }

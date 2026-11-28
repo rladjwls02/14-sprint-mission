@@ -33,7 +33,7 @@ CREATE TABLE message (
     updated_at TIMESTAMP(6) WITH TIME ZONE,
     content VARCHAR(255),
     channel_id UUID NOT NULL REFERENCES channel(id) ON DELETE CASCADE,
-    author_id UUID NOT NULL REFERENCES users(id) ON DELETE SET NULL
+    author_id UUID REFERENCES users(id) ON DELETE SET NULL
 );
 
 CREATE TABLE message_attachments (

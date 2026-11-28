@@ -33,7 +33,7 @@ public class Message implements Serializable {
   @OnDelete(action = OnDeleteAction.CASCADE)
   private Channel channel;
   @ManyToOne
-  @JoinColumn(name = "author_id", nullable = false)
+  @JoinColumn(name = "author_id")
   @OnDelete(action = OnDeleteAction.SET_NULL)
   private User author;
 
