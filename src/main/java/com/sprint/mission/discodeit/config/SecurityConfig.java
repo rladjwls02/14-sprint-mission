@@ -66,6 +66,8 @@ public class SecurityConfig {
             auth.requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll();
             /* 로그아웃 */
             auth.requestMatchers(HttpMethod.POST, "/api/auth/logout").permitAll();
+            /* 리프레시 토큰 재발급 */
+            auth.requestMatchers(HttpMethod.POST, "/api/auth/refresh").permitAll();
             /* api가 아닌 요청 */
             auth.requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**").permitAll();
             auth.requestMatchers("/actuator/**").permitAll();
