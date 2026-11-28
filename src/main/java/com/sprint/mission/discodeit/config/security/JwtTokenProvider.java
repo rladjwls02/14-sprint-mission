@@ -120,12 +120,37 @@ public class JwtTokenProvider {
         }
     }
 
-    /* refresh 토큰 생성 로직, 여기서 시그니처까지 다 붙히고 온전한 jwt토큰 생성 */
+    public Date getIssueTimeFromToken(String token) {
+        try {
+            SignedJWT signedJWT = SignedJWT.parse(token);
+            return signedJWT.getJWTClaimsSet().getIssueTime();
+        } catch (ParseException e) {
+            throw new IllegalArgumentException("Invalid JWT token", e);
+        }
+    }
+
+    public Date getExpirationTimeFromToken(String token) {
+        try {
+            SignedJWT signedJWT = SignedJWT.parse(token);
+            return signedJWT.getJWTClaimsSet().getExpirationTime();
+        } catch (ParseException e) {
+            throw new IllegalArgumentException("Invalid JWT token", e);
+        }
+    }
+
+    /* refresh 토큰 생성 로직 (최초 발급 시 현재 시각 기준 refreshTokenExpirationMs 후 만료) */
     public String generateRefreshToken(DiscodeitUserDetails userDetails) throws JOSEException {
-        /* 페이로드에 들어갈 만료시각 구하기 */
         Instant now = Instant.now();
         Instant expiryDate = now.plusMillis(refreshTokenExpirationMs);
+        return generateRefreshToken(userDetails, Date.from(now), Date.from(expiryDate));
+    }
 
+    /* refresh 토큰 재발급 로직 (최초 발급시각·만료시각 고정, Rotation 시 유효기간 연장 방지) */
+    public String generateRefreshToken(
+        DiscodeitUserDetails userDetails,
+        Date issueTime,
+        Date expirationTime
+    ) throws JOSEException {
         /* claimSet = 페이로드 */
         JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
             .subject(userDetails.getUsername())
@@ -135,8 +160,8 @@ public class JwtTokenProvider {
             .claim("roles", userDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .toList())
-            .issueTime(Date.from(now))
-            .expirationTime(Date.from(expiryDate))
+            .issueTime(issueTime)
+            .expirationTime(expirationTime)
             .build();
 
         /* jwt토큰 생성및, 헤더 정의(해시 알고리즘 뭐썼는지), 위에서 만든 페이로드 넣기
@@ -178,14 +203,19 @@ public class JwtTokenProvider {
     }
 
     /* refresh Token 쿠키 생성
-     * 얘는 쿠키에 위치해야함 프론트 메모리에 위차하면 새로고침마다 초기화 */
+     * 얘는 쿠키에 위치해야함 프론트 메모리에 위차하면 새로고침마다 초기화
+     * Rotation 시에도 쿠키 만료시간이 초기화되지 않도록 토큰의 남은 유효기간으로 Max-Age 설정 */
     public Cookie generateRefreshTokenCookie(String refreshToken) {
         Cookie cookie = new Cookie(REFRESH_TOKEN_COOKIE_NAME, refreshToken);
         /* 쿠키에 위치하기에 XSS 방지위한 httpOnly 옵션 */
         cookie.setHttpOnly(true);
         cookie.setSecure(false);
         cookie.setPath("/");
-        cookie.setMaxAge((int) (refreshTokenExpirationMs / 1000));
+        Date expirationTime = getExpirationTimeFromToken(refreshToken);
+        long remainingSeconds = expirationTime != null
+            ? Math.max(0, (expirationTime.getTime() - System.currentTimeMillis()) / 1000)
+            : refreshTokenExpirationMs / 1000;
+        cookie.setMaxAge((int) remainingSeconds);
         return cookie;
     }
 

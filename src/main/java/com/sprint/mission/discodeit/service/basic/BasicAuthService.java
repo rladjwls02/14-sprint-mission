@@ -1,5 +1,6 @@
 package com.sprint.mission.discodeit.service.basic;
 
+import java.util.Date;
 import java.util.Map;
 import com.nimbusds.jose.JOSEException;
 import com.sprint.mission.discodeit.common.ErrorCode;
@@ -51,12 +52,18 @@ public class BasicAuthService implements AuthService {
     String username = jwtTokenProvider.getUsernameFromToken(refreshToken);
     DiscodeitUserDetails userDetails = (DiscodeitUserDetails) userDetailsService.loadUserByUsername(
         username);
+
     /* 액세스 토큰, 리프레시 토큰 함께 재발급
      * 근데 rotation방식을 사용하면 리프레시 토큰도 유효기간이 계속 초기화됌
-     * 처음 설정한 리프레시토큰 유효기간이 의미가 없게되버림 */
+     * 처음 설정한 리프레시토큰 유효기간이 의미가 없게되버림,
+     * 그래서 리프레시 토큰 발급시간이랑 만료시간을 추출,
+     * 재발급시 위에서 추출한 리프레시 토큰 발행시각, 만료시간 사용해서 토큰유효기간 고정 */
+    Date originalIssueTime = jwtTokenProvider.getIssueTimeFromToken(refreshToken);
+    Date originalExpirationTime = jwtTokenProvider.getExpirationTimeFromToken(refreshToken);
     try {
       String newAccessToken = jwtTokenProvider.generateAccessToken(userDetails);
-      String newRefreshToken = jwtTokenProvider.generateRefreshToken(userDetails);
+      String newRefreshToken = jwtTokenProvider.generateRefreshToken(
+          userDetails, originalIssueTime, originalExpirationTime);
       return new JwtInformation(userDetails.getUserDto(), newAccessToken, newRefreshToken);
     } catch (JOSEException e) {
       throw new AuthException(ErrorCode.INVALID_TOKEN, Map.of());
