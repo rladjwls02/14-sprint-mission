@@ -71,6 +71,11 @@ public enum ErrorCode {
         Level.WARN,
         HttpURLConnection.HTTP_SERVER_ERROR,
         "파일 입출력 도중 문제가 발생했습니다."
+    ),
+    INVALID_TOKEN(
+        Level.WARN,
+        HttpURLConnection.HTTP_UNAUTHORIZED,
+        "유효하지 않은 토큰입니다."
     );
 
     Level level;
