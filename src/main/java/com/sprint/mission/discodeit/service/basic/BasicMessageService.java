@@ -47,6 +47,7 @@ public class BasicMessageService implements MessageService {
   private final BinaryContentStorage binaryContentStorage;
 
   @Override
+  @PreAuthorize("#messageCreateRequest.authorId() == principal.userDto.id()")
   @Transactional
   public MessageDto create(MessageCreateRequest messageCreateRequest,
       List<BinaryContentCreateRequest> binaryContentCreateRequests) {
@@ -112,7 +113,7 @@ public class BasicMessageService implements MessageService {
   }
 
   @Override
-  @PreAuthorize("@messageRepository.existsByIdAndAuthorId(#messageId, principal.userDto.id())")
+  @PreAuthorize("!@messageRepository.existsById(#messageId) or @messageRepository.existsByIdAndAuthorId(#messageId, principal.userDto.id())")
   @Transactional
   public MessageDto update(UUID messageId, MessageUpdateRequest request) {
     log.info("메시지 업데이트 요청 - 메세지아이디: {}", messageId);
@@ -124,7 +125,7 @@ public class BasicMessageService implements MessageService {
   }
 
   @Override
-  @PreAuthorize("@messageRepository.existsByIdAndAuthorId(#messageId, principal.userDto.id())")
+  @PreAuthorize("!@messageRepository.existsById(#messageId) or @messageRepository.existsByIdAndAuthorId(#messageId, principal.userDto.id())")
   @Transactional
   public void delete(UUID messageId) {
     log.info("메시지 삭제 요청 - 메세지아이디: {}", messageId);
