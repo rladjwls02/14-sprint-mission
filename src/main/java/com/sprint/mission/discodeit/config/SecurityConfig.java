@@ -3,6 +3,7 @@ package com.sprint.mission.discodeit.config;
 import com.sprint.mission.discodeit.common.ErrorResponse;
 import com.sprint.mission.discodeit.config.security.JwtAuthenticationFilter;
 import com.sprint.mission.discodeit.config.security.JwtLoginSuccessHandler;
+import com.sprint.mission.discodeit.config.security.JwtLogoutHandler;
 import com.sprint.mission.discodeit.config.security.LoginFailureHandler;
 import com.sprint.mission.discodeit.config.security.SpaCsrfTokenRequestHandler;
 import com.sprint.mission.discodeit.entity.Role;
@@ -40,6 +41,7 @@ import tools.jackson.databind.ObjectMapper;
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final JwtLoginSuccessHandler successHandler;
+    private final JwtLogoutHandler jwtLogoutHandler;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final LoginFailureHandler failureHandler;
     private final ObjectMapper objectMapper;
@@ -54,8 +56,8 @@ public class SecurityConfig {
             );
         http.logout(logout -> logout
             .logoutUrl("/api/auth/logout")
+            .addLogoutHandler(jwtLogoutHandler)
             .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler(HttpStatus.NO_CONTENT))
-            .deleteCookies("JSESSIONID")
         );
         http.authorizeHttpRequests(auth -> {
             /* csrf 토큰 발급 */
